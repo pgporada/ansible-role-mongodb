@@ -1,0 +1,111 @@
+---
+mongodb_package: mongodb-org
+mongodb_version: "4.0"
+mongodb_apt_keyserver: keyserver.ubuntu.com
+mongodb_apt_key_id:
+  "3.4": "0C49F3730359A14518585931BC711F9BA15703C6"
+  "3.6": "2930ADAE8CAF5059EE73BB4B58712A2291FA4AD5"
+  "4.0": "9DA31620334BD75D9DCB49F368818C72E52529D4"
+
+mongodb_pymongo_from_pip: true                   # Install latest PyMongo via PIP or package manager
+mongodb_pymongo_pip_version: 3.7.2
+
+mongodb_user_update_password: "on_create"        # MongoDB user password update default policy
+mongodb_manage_service: true
+
+mongodb_disable_transparent_hugepages: false
+
+mongodb_user: "{{ 'mongod' if ('RedHat' == ansible_os_family) else 'mongodb' }}"
+mongodb_group: mongodb
+mongodb_uid:
+mongodb_gid:
+mongodb_daemon_name: "{{ 'mongod' if ('mongodb-org' in mongodb_package) else 'mongodb' }}"
+
+## net Options
+mongodb_net_bindip: 127.0.0.1                    # Comma separated list of ip addresses to listen on
+mongodb_net_http_enabled: false                  # Enable http interface
+mongodb_net_ipv6: false                          # Enable IPv6 support (disabled by default)
+mongodb_net_maxconns: 51200                      # Max number of simultaneous connections
+mongodb_net_port: 27017                          # Specify port number
+mongodb_net_ssl: disabled                        # Enable or disable ssl connections
+mongodb_net_ssl_mode:                            # Set the ssl mode (RequireSSL / PreferSSL / AllowSSL / disabled)
+mongodb_net_ssl_pemfile:                         # Location of the pemfile to use for ssl
+
+## processManagement Options
+# Fork server process
+# Enabled by default for RedHat as the init scripts assume forking is enabled.
+mongodb_processmanagement_fork: "{{ 'RedHat' == ansible_os_family }}"
+
+## security Options
+# Disable or enable security. Possible values: 'disabled', 'enabled'
+mongodb_security_authorization: "disabled"
+mongodb_security_keyfile: /etc/mongodb-keyfile   # Specify path to keyfile with password for inter-process authentication
+
+## storage Options
+mongodb_storage_dbpath: /usr/lib/unifi/data/db                 # Directory for datafiles
+mongodb_storage_dirperdb: false                  # Use one directory per DB
+
+# The storage engine for the mongod database. Available values:
+# 'mmapv1', 'wiredTiger'
+mongodb_storage_engine: "wiredTiger"
+# mmapv1 specific options
+mongodb_storage_quota_enforced: false            # Limits each database to a certain number of files
+mongodb_storage_quota_maxfiles: 8                # Number of quota files per DB
+mongodb_storage_smallfiles: false                # Very useful for non-data nodes
+
+mongodb_storage_journal_enabled: true            # Enable journaling
+mongodb_storage_prealloc: true                   # Enable data file preallocation
+
+## systemLog Options
+## The destination to which MongoDB sends all log output. Specify either 'file' or 'syslog'.
+## If you specify 'file', you must also specify mongodb_systemlog_path.
+mongodb_systemlog_destination: "file"
+mongodb_systemlog_logappend: true                                        # Append to logpath instead of over-writing
+mongodb_systemlog_logrotate: "rename"                                    # Logrotation behavior
+mongodb_systemlog_path: /var/log/mongodb/{{ mongodb_daemon_name }}.log   # Log file to send write to instead of stdout
+
+## replication Options
+mongodb_replication_replset:                      # Enable replication <setname>[/<optionalseedhostlist>]
+mongodb_replication_replindexprefetch: "all"      # specify index prefetching behavior (if secondary) [none|_id_only|all]
+mongodb_replication_oplogsize: 1024               # specifies a maximum size in megabytes for the replication operation log
+
+# MMS Agent
+mongodb_mms_agent_pkg: https://mms.mongodb.com/download/agent/automation/mongodb-mms-automation-agent-manager_1.4.2.783-1_amd64.deb
+mongodb_mms_group_id: ""
+mongodb_mms_api_key: ""
+mongodb_mms_base_url: https://mms.mongodb.com
+
+# password for inter-process authentication
+# please regenerate this file on production environment with command 'openssl rand -base64 741'
+mongodb_keyfile_content: |
+  qJ+6YHKPgc8KJMqPvNlpbyNmt074EadxCdZcjzfi3/qYH6QlPObxnQ2COO66Pctb
+  fOPBvUcUwxuOyxzlk+2Q3iVAvAfC/juVb56YuM6fO+WoP3t2JgG8mt/PDe4kOPI6
+  ILtiRczUgf5UrUTG4/JS6EEXujzg56bBjqPDBmK/EkNtnYC5GNdjJk1h3UaO876s
+  HLEEQ6o9g5Gg+RgKnMarJW4kK6BJXG/P2gWLNnCCCebovUo/Hl89FtPPqBgShL7r
+  Obc6MIdSsWMF1C5Nw7J6OpfQ4Qh2Rr+KRdcjsdc0p8PH6YJpkNleLOw8D076nrN3
+  EPm5aX0IVkNdkrfga0z7DeaaH1d4cwZZBGligPhn0sH9wfwHSbQJWmK0pDiBwXqd
+  NQ6vHZIUuSDR+YgDIrr3byI5bOIJqC4VPvARxYKr2kuRl426dLIFMM+NFVHDdHBf
+  0IB2Epg5zGyw+IDJv3+9Cg3bgVLyBf1eRhZm662YwOMgKVmHkGWappFqb83NMHRJ
+  pHl5YIR2DlHvwf2QEa0DNX0H3Diq4Cz2ExolYmoOnKTUGLf2iVtFWJ48Q8ifmeD2
+  3sTBcL0HGjUwEPXKsrzo417hhiOFWeA6M7u1rmK9naO9kSsh2QvAWj2r3YQwJ417
+  K2HxLJdSGDYuIifnz7LqXqkHyK+2rD1sYGhf5Nn2a68CyVnQdOvLy0Og3Dt9DYdi
+  KqTPaorTCyok4MaF1M8ZcJm96nQm6E7pMrfL+TwUel4msJhBtEcsXz3sl45JM91S
+  ZNFxa2ITF/2AQSxnuuELLfGrRxh09q7O7Ia6Mpnrg+V2JlzA18z2CgD3TR/ixERv
+  1ACijjC5JDaHX5AryIZhy6kTyhnyX2VFpn4Kxj4SNTEkdbJfc1d67ktQhF5uS9Fk
+  3hiULL9u7C1qKKB1reevtlvMuntr0LKg7f5NwWL+DnqJ7V3XAF6iOAUJStwu20kU
+  ZXZVI92aimjL4cjv0XJ61Kq7UUD5
+
+# names and passwords for administrative users
+# CHANGE THESE >:[
+mongodb_user_admin_name: siteUserAdmin
+mongodb_user_admin_password: kfsglkfdnglkdfglkdfglkfjd
+
+mongodb_root_admin_name: siteRootAdmin
+mongodb_root_admin_password: 2ij3roi2roi2roijsoidfgj
+
+mongodb_root_backup_name: backupuser
+mongodb_root_backup_password: ifsgoih2409hrfghou2ioroi
+
+# setParameter config
+mongodb_set_parameters:
+...
